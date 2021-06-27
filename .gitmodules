@@ -1,0 +1,3 @@
+[submodule "PaPiRus"]
+	path = PaPiRus
+	url = https://github.com/PiSupply/PaPiRus
