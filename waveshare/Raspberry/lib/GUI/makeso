@@ -1,0 +1,38 @@
+DIR_Config   = ../Config
+DIR_EPD      = ../e-Paper
+DIR_FONTS    = ../Fonts
+DIR_GUI      = ../GUI
+DIR_Examples = ../../examples
+
+DIR_BIN      = ../../bin
+
+OBJ_O = $(patsubst %.c,${DIR_BIN}/%.o,$(notdir ${OBJ_C}))
+CFLAGS += $(MSG) $(DEBUG) $(STD)
+LIB = -lbcm2835 -lm -lrt -lpthread
+
+CC=gcc
+
+libdraw.so: libdraw.o
+	${CC} -shared -o libdraw.so libdraw.o
+
+libdraw.o: libdraw.cpp
+	g++ -c libdraw.cpp -o libdraw.o
+
+${DIR_BIN}/%.o:$(DIR_Config)/%.c
+	$(CC) $(CFLAGS) -c  $< -o $@ 
+
+${DIR_BIN}/%.o:$(DIR_EPD)/%.c
+	$(CC) $(CFLAGS) -c  $< -o $@ 
+	
+${DIR_BIN}/%.o:$(DIR_FONTS)/%.c
+	$(CC) $(CFLAGS) -c  $< -o $@ 
+	
+${DIR_BIN}/%.o:$(DIR_GUI)/%.c
+	$(CC) $(CFLAGS) -c  $< -o $@ 
+	
+${DIR_BIN}/%.o:$(DIR_Examples)/%.c
+	$(CC) $(CFLAGS) -c  $< -o $@ 
+
+clean:
+	rm $(DIR_BIN)/*.*; rm libdraw.o; rm libdraw.so
+	

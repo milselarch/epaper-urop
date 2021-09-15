@@ -1,0 +1,7 @@
+.idea
+.idea/*
+.vscode
+.vscode/*
+
+*.o
+*.so
