@@ -401,7 +401,7 @@ static void EPD_IT8951_HostAreaPackedPixelWrite_1bp(IT8951_Load_Img_Info*Load_Im
 
     UWORD* Source_Buffer = (UWORD*)Load_Img_Info->Source_Buffer_Addr;
     EPD_IT8951_SetTargetMemoryAddr(Load_Img_Info->Target_Memory_Addr);
-    EPD_IT8951_LoadImgAreaStart(Load_Img_Info,Area_Img_Info);
+    EPD_IT8951_LoadImgAreaStart(Load_Img_Info, Area_Img_Info);
 
     //from byte to word
     //use 8bp to display 1bp, so here, divide by 2, because every byte has full bit.
@@ -775,8 +775,10 @@ void EPD_IT8951_1bp_Refresh(UBYTE* Frame_Buf, UWORD X, UWORD Y, UWORD W, UWORD H
 function :	EPD_IT8951_1bp_Multi_Frame_Write
 parameter:  
 ******************************************************************************/
-void EPD_IT8951_1bp_Multi_Frame_Write(UBYTE* Frame_Buf, UWORD X, UWORD Y, UWORD W, UWORD H,UDOUBLE Target_Memory_Addr, bool Packed_Write)
-{
+void EPD_IT8951_1bp_Multi_Frame_Write(
+    UBYTE* Frame_Buf, UWORD X, UWORD Y, UWORD W, UWORD H,
+    UDOUBLE Target_Memory_Addr, bool Packed_Write
+) {
     IT8951_Load_Img_Info Load_Img_Info;
     IT8951_Area_Img_Info Area_Img_Info;
 
@@ -836,7 +838,9 @@ void EPD_IT8951_2bp_Refresh(UBYTE* Frame_Buf, UWORD X, UWORD Y, UWORD W, UWORD H
     Area_Img_Info.Area_W = W;
     Area_Img_Info.Area_H = H;
 
-    EPD_IT8951_HostAreaPackedPixelWrite_2bp(&Load_Img_Info, &Area_Img_Info,Packed_Write);
+    EPD_IT8951_HostAreaPackedPixelWrite_2bp(
+        &Load_Img_Info, &Area_Img_Info, Packed_Write
+    );
 
     if(Hold == true)
     {

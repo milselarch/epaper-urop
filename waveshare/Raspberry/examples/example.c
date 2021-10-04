@@ -346,7 +346,6 @@ UBYTE Dynamic_Refresh_Example(IT8951_Dev_Info Dev_Info, UDOUBLE Init_Target_Memo
     return 0;
 }
 
-
 /******************************************************************************
 function: Dynamic_GIF_Example
 parameter:
@@ -355,17 +354,18 @@ parameter:
     Init_Target_Memory_Addr: Memory address of IT8951 target memory address
     BitsPerPixel: Bits Per Pixel, 2^BitsPerPixel = grayscale
 ******************************************************************************/
-UBYTE Dynamic_GIF_Example(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target_Memory_Addr){
-
+UBYTE Dynamic_GIF_Example(
+    UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target_Memory_Addr
+) {
     UWORD Animation_Start_X = 0;
     UWORD Animation_Start_Y = 0;
     UWORD Animation_Area_Width = 800;
     UWORD Animation_Area_Height = 600;
 
-    if(Animation_Area_Width > Panel_Width){
+    if (Animation_Area_Width > Panel_Width) {
         return -1;
     }
-    if(Animation_Area_Height > Panel_Height){
+    if (Animation_Area_Height > Panel_Height) {
         return -1;
     }
 
@@ -385,7 +385,7 @@ UBYTE Dynamic_GIF_Example(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Ta
 
     Imagesize = ((Animation_Area_Width * 1 % 8 == 0)? (Animation_Area_Width * 1 / 8 ): (Animation_Area_Width * 1 / 8 + 1)) * Animation_Area_Height;
 
-    if((Refresh_Frame_Buf = (UBYTE *)malloc(Imagesize)) == NULL){
+    if ((Refresh_Frame_Buf = (UBYTE *)malloc(Imagesize)) == NULL) {
         Debug("Failed to apply for image memory...\r\n");
         return -1;
     }
@@ -415,6 +415,7 @@ UBYTE Dynamic_GIF_Example(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Ta
     Animation_Test_Finish = clock();
     Animation_Test_Duration = (double)(Animation_Test_Finish - Animation_Test_Start) / CLOCKS_PER_SEC;
 	Debug( "Write all frame occupy %f second\r\n", Animation_Test_Duration);
+    Debug(" Write FPS: %f \r\n", Pic_Num / Animation_Test_Duration);
 
     Target_Memory_Addr = Basical_Memory_Addr;
 
@@ -436,9 +437,122 @@ UBYTE Dynamic_GIF_Example(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Ta
         Animation_Test_Finish = clock();
         Animation_Test_Duration = (double)(Animation_Test_Finish - Animation_Test_Start) / CLOCKS_PER_SEC;
         Debug( "Show all frame occupy %f second\r\n", Animation_Test_Duration );
+        double fps = Pic_Num / Animation_Test_Duration;
+        Debug("fps: %f \r\n", fps);
 
         Repeat_Animation_Times ++;
-        if(Repeat_Animation_Times >15){
+        if (Repeat_Animation_Times > 15) {
+            break;
+        }
+    }
+
+    if (Refresh_Frame_Buf != NULL) {
+        free(Refresh_Frame_Buf);
+        Refresh_Frame_Buf = NULL;
+    }
+
+    return 0;
+}
+
+/******************************************************************************
+function: Dynamic_GIF_Example
+parameter:
+    Panel_Width: Width of the panel
+    Panel_Height: Height of the panel
+    Init_Target_Memory_Addr: Memory address of IT8951 target memory address
+    BitsPerPixel: Bits Per Pixel, 2^BitsPerPixel = grayscale
+******************************************************************************/
+UBYTE Dynamic_GIF_Example_2(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target_Memory_Addr){
+    // UWORD bpp = 1;
+    UWORD Animation_Start_X = 0;
+    UWORD Animation_Start_Y = 0;
+    UWORD Animation_Area_Width = 1440;
+    UWORD Animation_Area_Height = 1072;
+
+    if(Animation_Area_Width > Panel_Width){
+        return -1;
+    }
+    if(Animation_Area_Height > Panel_Height){
+        return -1;
+    }
+
+    UDOUBLE Imagesize;
+
+    UBYTE Pic_Count = 0;
+    UBYTE Pic_Num = 4;
+    char Path[30];
+
+    UDOUBLE Basical_Memory_Addr = Init_Target_Memory_Addr;
+
+    UDOUBLE Target_Memory_Addr = Basical_Memory_Addr;
+    UWORD Repeat_Animation_Times = 0;
+
+    clock_t Animation_Test_Start, Animation_Test_Finish;
+    double Animation_Test_Duration;
+
+    Imagesize = ((Animation_Area_Width * 1 % 8 == 0)? (Animation_Area_Width * 1 / 8 ): (Animation_Area_Width * 1 / 8 + 1)) * Animation_Area_Height;
+
+    if((Refresh_Frame_Buf = (UBYTE *)malloc(Imagesize)) == NULL){
+        Debug("Failed to apply for image memory...\r\n");
+        return -1;
+    }
+
+    Paint_NewImage(Refresh_Frame_Buf, Animation_Area_Width, Animation_Area_Height, 0, BLACK);
+    Paint_SelectImage(Refresh_Frame_Buf);
+	Epd_Mode(epd_mode);
+    Paint_SetBitsPerPixel(1);
+
+    Debug("Start to write a animation\r\n");
+    Debug("EPD MODE %d", epd_mode);
+
+    Animation_Test_Start = clock();
+    for (int i=0; i < Pic_Num; i += 1) {
+        Paint_Clear(WHITE);
+        sprintf(Path,"./pic/1440x1072_%d.bmp",Pic_Count++);
+        GUI_ReadBmp(Path, 0, 0);
+        //For color definition of all BitsPerPixel, you can refer to GUI_Paint.h
+        Paint_DrawNum(10, 10, i+1, &Font16, 0x00, 0xF0);
+		if(epd_mode == 2)
+			EPD_IT8951_1bp_Multi_Frame_Write(Refresh_Frame_Buf, 1280-Animation_Area_Width+Animation_Start_X, Animation_Start_Y, Animation_Area_Width,  Animation_Area_Height, Target_Memory_Addr,false);
+        else if(epd_mode == 1)
+			EPD_IT8951_1bp_Multi_Frame_Write(Refresh_Frame_Buf, Panel_Width-Animation_Area_Width+Animation_Start_X-16, Animation_Start_Y, Animation_Area_Width,  Animation_Area_Height, Target_Memory_Addr,false);
+		else
+			EPD_IT8951_1bp_Multi_Frame_Write(Refresh_Frame_Buf, Animation_Start_X, Animation_Start_Y, Animation_Area_Width,  Animation_Area_Height, Target_Memory_Addr,false);
+        
+        
+        Target_Memory_Addr += Imagesize;
+    }
+
+    Animation_Test_Finish = clock();
+    Animation_Test_Duration = (double)(Animation_Test_Finish - Animation_Test_Start) / CLOCKS_PER_SEC;
+	Debug( "Write all frame occupy %f second\r\n", Animation_Test_Duration);
+    Debug(" Write FPS: %f \r\n", Pic_Num / Animation_Test_Duration);
+
+    Target_Memory_Addr = Basical_Memory_Addr;
+
+    while(1){
+        Debug("Start to show a animation\r\n");
+        Animation_Test_Start = clock();
+
+        for(int i=0; i< Pic_Num; i += 1){
+			if(epd_mode == 2)
+				EPD_IT8951_1bp_Multi_Frame_Refresh(Panel_Width-Animation_Area_Width+Animation_Start_X, Animation_Start_Y, Animation_Area_Width,  Animation_Area_Height, Target_Memory_Addr);
+			else if(epd_mode == 1)
+				EPD_IT8951_1bp_Multi_Frame_Refresh(Panel_Width-Animation_Area_Width+Animation_Start_X-16, Animation_Start_Y, Animation_Area_Width,  Animation_Area_Height, Target_Memory_Addr);
+            else
+				EPD_IT8951_1bp_Multi_Frame_Refresh(Animation_Start_X, Animation_Start_Y, Animation_Area_Width,  Animation_Area_Height, Target_Memory_Addr);
+            Target_Memory_Addr += Imagesize;
+        }
+        Target_Memory_Addr = Basical_Memory_Addr;
+
+        Animation_Test_Finish = clock();
+        Animation_Test_Duration = (double)(Animation_Test_Finish - Animation_Test_Start) / CLOCKS_PER_SEC;
+        Debug( "Show all frame occupy %f second\r\n", Animation_Test_Duration );
+        double fps = Pic_Num / Animation_Test_Duration;
+        Debug("fps: %f \r\n", fps);
+
+        Repeat_Animation_Times ++;
+        if(Repeat_Animation_Times > 15){
             break;
         }
     }
@@ -451,7 +565,84 @@ UBYTE Dynamic_GIF_Example(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Ta
     return 0;
 }
 
+int Dynamic_GIF_Example_3(
+    UWORD panel_width, UWORD panel_height,
+    UDOUBLE mem_addr
+) {
+    UWORD Animation_Start_X = 0;
+    UWORD Animation_Start_Y = 0;
+    UWORD Animation_Area_Width = 800;
+    UWORD Animation_Area_Height = 600;
 
+    if (Animation_Area_Width > panel_width) {
+        return -1;
+    }
+    if (Animation_Area_Height > panel_height) {
+        return -1;
+    }
+
+    UBYTE *REFRESH_FRAME_BUF = Refresh_Frame_Buf;
+    UDOUBLE Imagesize;
+
+    UBYTE Pic_Count = 0;
+    UBYTE Pic_Num = 7;
+    // char Path[30];
+
+    UDOUBLE Basical_Memory_Addr = mem_addr;
+
+    UDOUBLE Target_Memory_Addr = Basical_Memory_Addr;
+    UWORD Repeat_Animation_Times = 0;
+
+    clock_t Animation_Test_Start, Animation_Test_Finish;
+    double Animation_Test_Duration;
+
+    Imagesize = ((Animation_Area_Width * 1 % 8 == 0)? (Animation_Area_Width * 1 / 8 ): (Animation_Area_Width * 1 / 8 + 1)) * Animation_Area_Height;
+
+    if ((REFRESH_FRAME_BUF = (UBYTE *) malloc(Imagesize)) == NULL) {
+        Debug("Failed to apply for image memory...\r\n");
+        return -1;
+    }
+
+    Paint_NewImage(REFRESH_FRAME_BUF, Animation_Area_Width, Animation_Area_Height, 0, BLACK);
+    Paint_SelectImage(REFRESH_FRAME_BUF);
+	Epd_Mode(epd_mode);
+    Paint_SetBitsPerPixel(1);
+
+	Paint_Clear(WHITE);
+
+	char path[30] = "./pic/800x600_0.bmp";
+	GUI_ReadBmp(path, 0, 0);
+
+	if(epd_mode == 2) {
+		EPD_IT8951_1bp_Multi_Frame_Write(REFRESH_FRAME_BUF, 1280-Animation_Area_Width+Animation_Start_X, Animation_Start_Y, Animation_Area_Width,  Animation_Area_Height, Target_Memory_Addr,false);
+	} else if (epd_mode == 1) {
+		EPD_IT8951_1bp_Multi_Frame_Write(REFRESH_FRAME_BUF, panel_width-Animation_Area_Width+Animation_Start_X-16, Animation_Start_Y, Animation_Area_Width,  Animation_Area_Height, Target_Memory_Addr,false);
+	} else {
+		EPD_IT8951_1bp_Multi_Frame_Write(REFRESH_FRAME_BUF, Animation_Start_X, Animation_Start_Y, Animation_Area_Width,  Animation_Area_Height, Target_Memory_Addr,false);
+	}
+
+    Animation_Test_Finish = clock();
+    Animation_Test_Duration = (double)(Animation_Test_Finish - Animation_Test_Start) / CLOCKS_PER_SEC;
+	Debug( "Write all frame occupy %f second\r\n", Animation_Test_Duration);
+    Debug(" Write FPS: %f \r\n", Pic_Num / Animation_Test_Duration);
+
+    Target_Memory_Addr = Basical_Memory_Addr;
+
+	if (epd_mode == 2) {
+		EPD_IT8951_1bp_Multi_Frame_Refresh(panel_width-Animation_Area_Width+Animation_Start_X, Animation_Start_Y, Animation_Area_Width,  Animation_Area_Height, Target_Memory_Addr);
+	} else if(epd_mode == 1) {
+		EPD_IT8951_1bp_Multi_Frame_Refresh(panel_width-Animation_Area_Width+Animation_Start_X-16, Animation_Start_Y, Animation_Area_Width,  Animation_Area_Height, Target_Memory_Addr);
+	} else {
+		EPD_IT8951_1bp_Multi_Frame_Refresh(Animation_Start_X, Animation_Start_Y, Animation_Area_Width,  Animation_Area_Height, Target_Memory_Addr);
+	}
+	
+    if (REFRESH_FRAME_BUF != NULL) {
+        free(REFRESH_FRAME_BUF);
+        REFRESH_FRAME_BUF = NULL;
+    }
+
+    return 0;
+}
 
 /******************************************************************************
 function: Check_FrameRate_Example

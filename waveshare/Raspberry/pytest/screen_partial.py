@@ -5,9 +5,12 @@ import faulthandler
 import numpy as np
 import ctypes as ct
 import pyautogui 
+import time
 import os
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 1872, 1404
+SW, SH = SCREEN_WIDTH, SCREEN_HEIGHT
+
 faulthandler.enable()
 bits_per_pixel = 1
 
@@ -23,7 +26,17 @@ bcmtest.change_bits_per_pixel.argtypes = [ct.c_ushort]
 
 bcmtest.draw_grayscale_array.restype = ct.c_int
 bcmtest.draw_grayscale_array.argtypes = [
+    ct.c_int, ct.c_int,
     ct.c_ushort, ct.c_ushort, ct.c_ushort,
+    np.ctypeslib.ndpointer(
+        dtype=np.uint8, ndim=2,
+        flags='C_CONTIGUOUS'
+    )
+]
+
+bcmtest.fast_draw_grayscale_array.restype = ct.c_int
+bcmtest.fast_draw_grayscale_array.argtypes = [
+    ct.c_int, ct.c_int, ct.c_int, ct.c_int,
     np.ctypeslib.ndpointer(
         dtype=np.uint8, ndim=2,
         flags='C_CONTIGUOUS'
@@ -34,8 +47,13 @@ print('pre-test')
 result = bcmtest.reset()
 bcmtest.clear_screen(bits_per_pixel)
 
-def open_image(image, bpp=None):
+def open_image(
+    image, bpp=None, x=0, y=0,
+    width=None, height=None
+):
     global bits_per_pixel
+    global prev_arr
+    global prev_res
 
     if bpp is None:
         bpp = bits_per_pixel
@@ -49,32 +67,38 @@ def open_image(image, bpp=None):
     if type(image) == str:
         image = Image.open(image)
 
-    scale = min(
-        SCREEN_WIDTH / image.width,
-        SCREEN_HEIGHT / image.height
-    )
+    if width is None:
+        width = image.width
+    if height is None:
+        height = image.height
 
-    width = int(image.width * scale)
-    height = int(image.height * scale)
+    width -= width % 16
+    height -= height % 16
 
     image = image.resize((width, height))
     gray_image = ImageOps.grayscale(image)
-    # gray_image.show()
-
     arr = np.array(gray_image, dtype=np.uint8)
-    # arr2 = arr.flatten()
-    # arr = 255 - arr
-
     height, width = arr.shape[0], arr.shape[1]
-    # print(arr, arr.shape)
+    res = (width, height)
 
-    bcmtest.draw_grayscale_array(
-        width, height, bpp, arr
+    x -= x % 16
+    y -= y % 16
+
+    prev_arr = arr
+    prev_res = res
+    print('WH', width, height)
+    # print('START-COORDS', coords)
+    bcmtest.fast_draw_grayscale_array(
+        x, y, width, height, arr
     )
 
-open_image('/home/pi/Downloads/alena-aenami-quiet-1px.jpg')
-open_image('screenshot.png', bpp=2)
+frame_no = 0
 
-# screenshot = pyautogui.screenshot()
-# open_image(screenshot)
-                                              
+while True:
+    print(f'frame no: {frame_no}')
+    screenshot = pyautogui.screenshot()
+    open_image(screenshot, width=SW, height=SH)
+    # open_image(screenshot, width=SW//2, height=SH//2, x=200, y=200)
+    # WH 936 696
+    # open_image(screenshot, width=1600, height=600, x=0, y=0)
+    frame_no += 1                            

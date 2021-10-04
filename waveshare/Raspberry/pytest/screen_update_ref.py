@@ -9,7 +9,7 @@ import os
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 1872, 1404
 faulthandler.enable()
-bits_per_pixel = 1
+bits_per_pixel = 2
 
 bcmtest = ct.CDLL('./bcmtest.so')
 bcmtest.reset.restype = ct.c_int
@@ -72,9 +72,10 @@ def open_image(image, bpp=None):
         width, height, bpp, arr
     )
 
-open_image('/home/pi/Downloads/alena-aenami-quiet-1px.jpg')
-open_image('screenshot.png', bpp=2)
+# open_image('/home/pi/Downloads/alena-aenami-quiet-1px.jpg')
+# open_image('screenshot.png', bpp=2)
 
-# screenshot = pyautogui.screenshot()
-# open_image(screenshot)
+while True:
+	screenshot = pyautogui.screenshot()
+	open_image(screenshot)
                                               
