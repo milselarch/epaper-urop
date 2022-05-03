@@ -8,6 +8,8 @@ import pyautogui
 import time
 import os
 
+os.environ['DISPLAY'] = ':0'
+
 SCREEN_WIDTH, SCREEN_HEIGHT = 1872, 1404
 SW, SH = SCREEN_WIDTH, SCREEN_HEIGHT
 

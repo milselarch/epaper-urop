@@ -178,10 +178,11 @@ int draw_grayscale_array(
 		case 1: {
 			EPD_IT8951_1bp_Multi_Frame_Write(
 				REFRESH_FRAME_BUF, start_x, start_y,
-				width, height, mem_addr, false
+				panel_width, panel_height, mem_addr, false
 			);
 			EPD_IT8951_1bp_Multi_Frame_Refresh(
-				start_x, start_y, width, height, mem_addr
+				start_x, start_y, panel_width, 
+				panel_height, mem_addr
 			);
 			/*
 			EPD_IT8951_1bp_Refresh(
@@ -193,19 +194,19 @@ int draw_grayscale_array(
 		} case 2: {
 			EPD_IT8951_2bp_Refresh(
 				REFRESH_FRAME_BUF, start_x, start_y,
-				width,  height, A2_Mode, mem_addr, false
+				panel_width,  panel_height, A2_Mode, mem_addr, false
 			);
 			break;
 		} case 4: {
 			EPD_IT8951_4bp_Refresh(
 				REFRESH_FRAME_BUF, start_x, start_y,
-				width,  height, A2_Mode, mem_addr, false
+				panel_width,  panel_height, A2_Mode, mem_addr, false
 			);
 			break;
 		} case 8: {
 			EPD_IT8951_8bp_Refresh(
 				REFRESH_FRAME_BUF, start_x, start_y,
-				width, height, A2_Mode, mem_addr
+				panel_width, panel_height, A2_Mode, mem_addr
 			);
 			break;
 		}

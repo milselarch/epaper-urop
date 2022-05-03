@@ -23,6 +23,7 @@ bcmtest.change_bits_per_pixel.argtypes = [ct.c_ushort]
 
 bcmtest.draw_grayscale_array.restype = ct.c_int
 bcmtest.draw_grayscale_array.argtypes = [
+    ct.c_int, ct.c_int, 
     ct.c_ushort, ct.c_ushort, ct.c_ushort,
     np.ctypeslib.ndpointer(
         dtype=np.uint8, ndim=2,
@@ -66,11 +67,12 @@ def open_image(image, bpp=None):
     # arr = 255 - arr
 
     height, width = arr.shape[0], arr.shape[1]
-    # print(arr, arr.shape)
+    print(arr, arr.shape)
 
     bcmtest.draw_grayscale_array(
-        width, height, bpp, arr
+        0, 0, width, height, bpp, arr
     )
+    input('>>> ')
 
 # open_image('/home/pi/Downloads/alena-aenami-quiet-1px.jpg')
 # open_image('screenshot.png', bpp=2)

@@ -87,21 +87,29 @@ class Updater(object):
 
         return gray_image
 
-    def screenshot(self):
-        screenshot = pyautogui.screenshot()
+    def rescale(self, image, grayscale=True):        
         scale = max(
-            screenshot.width / self.screen_width,
-            screenshot.height / self.screen_height
+            image.width / self.screen_width,
+            image.height / self.screen_height
         )
 
-        width = int(self.screen_width / scale)
-        height = int(self.screen_height / scale)
+        print('SCALE', scale)
+        width = int(image.width / scale)
+        height = int(image.height / scale)
         width -= width % 16
         height -= height % 16
 
-        screenshot = screenshot.resize((width, height))
-        gray_image = ImageOps.grayscale(screenshot)
-        arr = np.array(gray_image, dtype=np.uint8)
+        image = image.resize((width, height))
+        
+        if grayscale:
+            image = ImageOps.grayscale(image)
+            image = np.array(image, dtype=np.uint8)
+
+        return image
+
+    def screenshot(self):
+        screenshot = pyautogui.screenshot()
+        arr = self.rescale(screenshot)
         return arr
 
     def draw_test(self, test, chunk, start_x, start_y, width, height):
@@ -217,6 +225,25 @@ class Updater(object):
         sub_chunk = np.array(sub_chunk, dtype=np.uint8)
         print('CHUNK', x_chunk, y_chunk)
         return chunk, sub_chunk
+
+    def show_image(self, arr):
+        if type(arr) == str:
+            arr = Image.open(arr)
+            print('WH', arr.width, arr.height)
+            arr = self.rescale(arr)
+        
+        height, width = arr.shape[0], arr.shape[1]
+        self.draw(0, 0, width, height, arr)
+
+    def show_depth_image(self, arr, bpp=8):
+        if bpp != self.bits_per_pixel:
+            self.bcmtest.clear_screen(bpp)
+            self.bits_per_pixel = bpp
+
+        height, width = arr.shape[0], arr.shape[1]
+        self.bcmtest.draw_grayscale_array(
+            0, 0, width, height, bpp, arr
+        )
 
     def run(self, images=None):
         index = 0
