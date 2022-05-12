@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component version="1.5" xmlns="http://schemas.circuit-diagram.org/circuitDiagramDocument/2012/component/xml">
+  <declaration>
+    <meta name="name" value="Lipo charger" />
+    <meta name="minsize" value="120" />
+    <meta name="author" value="Me" />
+    <meta name="guid" value="8f764035-18c6-4421-ac7f-5cbd327d4e78" />
+  </declaration>
+  
+  <connections>
+  </connections>
+  
+  <render>
+    <text x="_Middle-90" y="_Middle+25" align="CentreCentre" value="OFF"/>
+    <text x="_Middle-90" y="_Middle+35" align="CentreCentre" value="(SW1 in)"/>
+    <line start="_Middle+50y-90x" end="_Middle+60y-90x" />
+    <text x="_Middle-40" y="_Middle+25" align="CentreCentre" value="ON"/>
+    <text x="_Middle-40" y="_Middle+35" align="CentreCentre" value="(SW2 in)"/>
+    <line start="_Middle+50y-40x" end="_Middle+60y-40x" />
+
+    <text x="_Middle+100" y="_Middle+25" align="CentreCentre" value="out"/>
+    <text x="_Middle+100" y="_Middle+35" align="CentreCentre" value="(on)"/>
+    <line start="_Middle+50y+100x" end="_Middle+60y+100x" />
+
+    <text x="_Middle+60" y="_Middle+25" align="CentreCentre" value="out"/>
+    <text x="_Middle+60" y="_Middle+35" align="CentreCentre" value="(off)"/>
+    <line start="_Middle+50y+60x" end="_Middle+60y+60x" />
+    <text x="_Middle+30" y="_Middle+35" align="CentreCentre" value="Pin"/>
+    <line start="_Middle+50y+30x" end="_Middle+60y+30x" />
+
+    <text x="_Middle-90" y="_Middle-35" align="CentreCentre" value="GND"/>
+    <line start="_Middle-50y-90x" end="_Middle-60y-90x" />
+    <text x="_Middle-40" y="_Middle-35" align="CentreCentre" value="GND"/>
+    <line start="_Middle-50y-40x" end="_Middle-60y-40x" />
+
+    <text x="_Middle+100" y="_Middle-35" align="CentreCentre" value="Pout"/>
+    <line start="_Middle-50y+100x" end="_Middle-60y+100x" />
+
+    <text x="_Middle-70" y="_Middle-5" align="CentreCentre" value="HFD2↥"/>
+
+    <text x="_Middle+60" y="_Middle-25" align="CentreCentre" value="out"/>
+    <text x="_Middle+60" y="_Middle-35" align="CentreCentre" value="(off)"/>
+    <line start="_Middle-50y+60x" end="_Middle-60y+60x" />
+    <text x="_Middle+30" y="_Middle-35" align="CentreCentre" value="Pin"/>
+    <line start="_Middle-50y+30x" end="_Middle-60y+30x" />
+
+    <rect x="_Middle+75" y="_Middle-50" width="10" height="5" />
+    <rect x="_Middle+75" y="_Middle+45" width="10" height="5" />
+    <rect x="_Middle-120" y="_Middle-50" width="240" height="100" />
+  </render>
+</component>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component version="1.5" xmlns="http://schemas.circuit-diagram.org/circuitDiagramDocument/2012/component/xml">
+  <declaration>
+    <meta name="name" value="Lipo charger" />
+    <meta name="minsize" value="120" />
+    <meta name="author" value="Me" />
+    <meta name="guid" value="8f764035-18c6-4421-ac7f-5cbd327d4e78" />
+  </declaration>
+  
+  <connections>
+  </connections>
+  
+  <render>
+    <line start="_Middle-30y-10x" end="_Middle-20y-10x" />
+    <line start="_Middle-30y+10x" end="_Middle-20y+10x" />
+
+    <line start="_Middle+40y-20x" end="_Middle+50y-20x" />
+    <line start="_Middle+40y" end="_Middle+50y" />
+    <line start="_Middle+40y+20x" end="_Middle+50y+20x" />
+    <!-- <line start="_Start" end="_End" /> -->
+
+    <text x="_Middle" y="_Middle+10" align="CentreCentre" value="BMS"/>
+    
+    <text x="_Middle" y="_Middle+30" align="CentreCentre" value="BM"/>
+    <text x="_Middle-20" y="_Middle+30" align="CentreCentre" value="+"/>
+    <text x="_Middle+20" y="_Middle+33" align="CentreCentre" value="−"/>
+
+    <text x="_Middle-10" y="_Middle-10" align="CentreCentre" value="+"/>
+    <text x="_Middle+10" y="_Middle-7" align="CentreCentre" value="−"/>
+
+    <rect x="_Middle-45" y="_Middle-20" width="90" height="60" />
+  </render>
+</component>
