@@ -1,6 +1,6 @@
 # epaper-urop
 
-Circuit and python high level API code + modified C code (adapted from waveshare) for interfacing with waveshare 10.3 inch epaper screen using a Raspberry Pi.
+Lipo charge and discharge circuit schematics, and python high level API code + modified C code (adapted from waveshare) for interfacing with waveshare 10.3 inch epaper screen using a Raspberry Pi.
 
 ![Overall circuit](https://github.com/milselarch/epaper-urop/blob/master/circuit-diagrams/overall-circuit-labelled.png)
 
